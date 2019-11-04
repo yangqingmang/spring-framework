@@ -23,7 +23,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -41,7 +40,6 @@ import org.springframework.util.ReflectionUtils;
  * @since 5.2
  * @param <A> the annotation type
  * @see Annotation
- * @see AnnotationAttributeExtractor
  * @see AnnotationUtils#synthesizeAnnotation(Annotation, AnnotatedElement)
  */
 final class SynthesizedMergedAnnotationInvocationHandler<A extends Annotation> implements InvocationHandler {
@@ -91,7 +89,7 @@ final class SynthesizedMergedAnnotationInvocationHandler<A extends Annotation> i
 	}
 
 	private boolean isAnnotationTypeMethod(Method method) {
-		return (Objects.equals(method.getName(), "annotationType") && method.getParameterCount() == 0);
+		return (method.getName().equals("annotationType") && method.getParameterCount() == 0);
 	}
 
 	/**
@@ -176,7 +174,7 @@ final class SynthesizedMergedAnnotationInvocationHandler<A extends Annotation> i
 		Class<?> type = ClassUtils.resolvePrimitiveIfNecessary(method.getReturnType());
 		return this.annotation.getValue(name, type).orElseThrow(
 				() -> new NoSuchElementException("No value found for attribute named '" + name +
-						"' in merged annotation " + this.annotation.getType()));
+						"' in merged annotation " + this.annotation.getType().getName()));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -16,8 +16,10 @@
 
 package org.springframework.web.reactive.function.server
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.reactive.asFlow
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.codec.multipart.Part
 import org.springframework.util.MultiValueMap
@@ -49,12 +51,30 @@ inline fun <reified T : Any> ServerRequest.bodyToFlux(): Flux<T> =
 		bodyToFlux(object : ParameterizedTypeReference<T>() {})
 
 /**
- * Coroutines variant of [ServerRequest.bodyToMono].
+ * Coroutines [kotlinx.coroutines.flow.Flow] based variant of [ServerRequest.bodyToFlux].
  *
  * @author Sebastien Deleuze
  * @since 5.2
  */
-suspend inline fun <reified T : Any> ServerRequest.awaitBody(): T? =
+inline fun <reified T : Any> ServerRequest.bodyToFlow(): Flow<T> =
+		bodyToFlux<T>().asFlow()
+
+/**
+ * Non-nullable Coroutines variant of [ServerRequest.bodyToMono].
+ *
+ * @author Sebastien Deleuze
+ * @since 5.2
+ */
+suspend inline fun <reified T : Any> ServerRequest.awaitBody(): T =
+		bodyToMono<T>().awaitSingle()
+
+/**
+ * Nullable Coroutines variant of [ServerRequest.bodyToMono].
+ *
+ * @author Sebastien Deleuze
+ * @since 5.2
+ */
+suspend inline fun <reified T : Any> ServerRequest.awaitBodyOrNull(): T? =
 		bodyToMono<T>().awaitFirstOrNull()
 
 /**
@@ -81,8 +101,8 @@ suspend fun ServerRequest.awaitMultipartData(): MultiValueMap<String, Part> =
  * @author Sebastien Deleuze
  * @since 5.2
  */
-suspend fun ServerRequest.awaitPrincipal(): Principal =
-		principal().awaitSingle()
+suspend fun ServerRequest.awaitPrincipal(): Principal? =
+		principal().awaitFirstOrNull()
 
 /**
  * Coroutines variant of [ServerRequest.session].
