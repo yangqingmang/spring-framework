@@ -5,6 +5,7 @@ buildscript {
 	}
 	repositories {
 		maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+		maven{ url 'https://maven.aliyun.com/repository/spring-plugin/'}
 	}
 }
 
@@ -299,7 +300,8 @@ configure(allprojects) { project ->
 		repositories {
 //			mavenCentral()
 //			maven { url "https://repo.spring.io/libs-spring-framework-build" }
-			maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+			maven{ url 'https://maven.aliyun.com/repository/public/'}
+			maven{ url 'https://maven.aliyun.com/repository/spring-plugin/'}
 		}
 	}
 	configurations.all {
